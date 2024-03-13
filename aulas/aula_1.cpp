@@ -14,6 +14,12 @@ int filho_dir(int n){
     return n*2 + 2;
 }
 
+void troca(int vetor[], int x, int y){
+    int aux = vetor[x];
+    vetor[x] = vetor[y];
+    vetor[y] = aux;
+}
+
 void desce(int vetor[], int n, int tam){
     int esq = filho_esq(n);
     int dir = filho_dir(n);
@@ -25,9 +31,7 @@ void desce(int vetor[], int n, int tam){
         maior = dir;
     }
     if(maior != n){
-        int aux = vetor[maior];
-        vetor[maior] = vetor[n];
-        vetor[n] = aux;
+        troca(vetor, maior, n);
         desce(vetor, maior, tam);
     }
 }
@@ -36,6 +40,60 @@ void constroi_heap(int vetor[], int tam){
     int n = pai(tam - 1);
     for(int i = n; i >= 0; i--){
         desce(vetor, i, tam);
+    }
+}
+
+void sobe(int vetor[], int n){
+    int P = pai(n);
+    if(vetor[n] > vetor[P]){
+        troca(vetor, vetor[n], vetor[P]);
+        sobe(vetor, P);
+    }
+}
+
+int acessa_max(int vetor[]){
+    return vetor[0];
+}
+
+int extrai_max(int vetor[], int *tam){
+    int max = vetor[0];
+    vetor[0] = vetor[*tam - 1];
+    desce(vetor, 0, *tam - 1);
+    *tam -= 1;
+    return max;
+}
+
+void altera_prioridade(int vetor[], int tam, int n, int valor){
+    if(vetor[n] > valor){
+        vetor[n] = valor;
+        desce(vetor, n, tam);
+    } else if(vetor[n] < valor){
+        vetor[n] = valor;
+        sobe(vetor, n);
+    }
+}
+
+int insere_elemento(int vetor[], int *tam, int max, int valor){
+    int ret = EXIT_SUCCESS;
+    if(*tam == max){
+        ret = EXIT_FAILURE;
+    } else{
+        vetor[*tam] = valor;
+        sobe(vetor, *tam);
+        *tam++;
+    } 
+    return ret;
+}
+
+void heap_sort(int vetor[], int tam){
+    int novo_vetor[tam];
+    int i = 0;
+    while(tam > 0){
+        novo_vetor[i] = extrai_max(vetor, &tam);
+        i++;
+    }
+    for(int j = 0; j <= i; j++){
+        vetor[j] = novo_vetor[i - j - 1];
     }
 }
 
@@ -81,6 +139,8 @@ int main(void){
 
     constroi_heap(vetor, tam);
     
+    heap_sort(vetor, tam);
+
     for(int i = 0; i<tam; i++){
         printf("%d\n", vetor[i]);
     }

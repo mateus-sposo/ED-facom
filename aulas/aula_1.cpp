@@ -88,6 +88,7 @@ int insere_elemento(int vetor[], int *tam, int max, int valor){
 }
 
 void heapsort(int vetor[], int tam){
+    constroi_heap(vetor, tam);
     int novo_vetor[tam];
     int i = 0;
     while(tam > 0){
